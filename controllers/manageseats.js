@@ -10,8 +10,19 @@ const geocoder = require("../utils/geocoder");
 //access    public
 
 exports.getallseats = asyncHandler(async (req, res, next) => {
-  const allseats = await seats.find();
-  console.log("in try");
+  //const allseats = await seats.find();
+  let query;
+  let querystr = JSON.stringify(req.query);
+
+  // getting query from req
+  querystr = querystr.replace(
+    /\b(gt|gte|lt|lte|in)\b/g,
+    (match) => `$${match}`
+  );
+  console.log(querystr);
+  query = seats.find(JSON.parse(querystr));
+
+  const allseats = await query;
   res
     .status(200)
     .json({ status: true, count: allseats.length, data: allseats });

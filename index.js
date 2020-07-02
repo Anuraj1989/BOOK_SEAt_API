@@ -13,13 +13,16 @@ connectDB();
 
 //Load route files
 const manageseats = require("./routes/manageseats");
+const auth = require("./routes/auth");
 
 const app = express();
 
 //Boday parser to get data from req
 app.use(express.json());
 
+//mount router
 app.use("/api/v1/seats", manageseats);
+app.use("/api/v1/auth", auth);
 
 //Attach the requests to customer error handler to catch all errors
 app.use(errorHandler);

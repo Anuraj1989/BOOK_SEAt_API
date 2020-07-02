@@ -25,6 +25,19 @@ const Seatschema = mongoose.Schema({
     trim: true,
     maxlength: [20, "location can not be more than 20"],
   },
+  officeid: {
+    type: String,
+    required: [true, "Please officeid"],
+    trim: true,
+    maxlength: [20, "officeid can not be more than 20"],
+  },
+
+  departement: {
+    // Array of strings
+    type: [String],
+    required: true,
+    enum: ["IT Service", "Customer Care", "Finance", "Business", "Other"],
+  },
   address: {
     type: String,
     required: [true, "Please add an address"],
