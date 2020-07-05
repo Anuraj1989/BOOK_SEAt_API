@@ -20,10 +20,11 @@ exports.register = asyncHandler(async (req, res, next) => {
     role,
   });
 
-  //create token
-  const token = user.getSignedJwtToken();
+  //create token  -- comented as using common cookie method
+  /*const token = user.getSignedJwtToken();
+  res.status(200).json({ success: true, token: token });*/
 
-  res.status(200).json({ success: true, token: token });
+  sendTokenResponse(user, 200, res);
 });
 
 //---------------------------------------------------------------------
@@ -59,7 +60,30 @@ exports.login = asyncHandler(async (req, res, next) => {
   }
 
   //create token
+  /*const token = user.getSignedJwtToken();
+  res.status(200).json({ success: true, token: token });*/
+  sendTokenResponse(user, 200, res);
+});
+
+//get token from model, create cooki and send response
+
+const sendTokenResponse = (user, statusCode, res) => {
   const token = user.getSignedJwtToken();
 
-  res.status(200).json({ success: true, token: token });
-});
+  const option = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRE * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true,
+  };
+
+  //setting secure for production env
+  if (process.env.NODE_ENV === "production") {
+    option.secure = true;
+  }
+
+  res.status(statusCode).cookie("token", token, option).json({
+    success: true,
+    token,
+  });
+};

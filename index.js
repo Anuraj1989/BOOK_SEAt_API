@@ -1,12 +1,14 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const colors = require("colors");
+const cookieParser = require("cookie-parser");
 const connectDB = require("./config/db");
 //Load environment variables
 dotenv.config({ path: "./config/config.env" });
 //load error handler method to catch next() errors
-
 const errorHandler = require("./middleware/error");
+//logger
+const logger = require("./middleware/logger");
 
 //COnnect to DB
 connectDB();
@@ -14,15 +16,24 @@ connectDB();
 //Load route files
 const manageseats = require("./routes/manageseats");
 const auth = require("./routes/auth");
+const bookings = require("./routes/booking");
 
 const app = express();
+
+//pass to loger middleware to print URLs
+
+app.use(logger);
 
 //Boday parser to get data from req
 app.use(express.json());
 
+// pass the request for cookie parser to middleware
+app.use(cookieParser());
+
 //mount router
 app.use("/api/v1/seats", manageseats);
 app.use("/api/v1/auth", auth);
+app.use("/api/v1/bookings", bookings);
 
 //Attach the requests to customer error handler to catch all errors
 app.use(errorHandler);

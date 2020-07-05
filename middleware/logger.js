@@ -1,5 +1,7 @@
 const logger = (req, res, next) => {
-  console.log("hello log me");
+  console.log(
+    `${req.method} ${req.protocol} ${req.get("host")} ${req.originalUrl}`
+  );
   next();
 };
 

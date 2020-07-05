@@ -20,7 +20,7 @@ exports.getallseats = asyncHandler(async (req, res, next) => {
     (match) => `$${match}`
   );
   console.log(querystr);
-  query = seats.find(JSON.parse(querystr));
+  query = seats.find(JSON.parse(querystr)).populate("booking");
 
   const allseats = await query;
   res
@@ -35,6 +35,7 @@ exports.getallseats = asyncHandler(async (req, res, next) => {
 
 exports.getseat = asyncHandler(async (req, res, next) => {
   const seat = await seats.findById(req.params.id);
+
   if (!seat) {
     return next(
       new errorRespose(`seat not found for id ${req.params.id}`, 404)
@@ -107,13 +108,15 @@ exports.updateSeat = asyncHandler(async (req, res, next) => {
 //access    private
 exports.deleteSeat = asyncHandler(async (req, res, next) => {
   // try {
-  const seat = await seats.findByIdAndDelete(req.params.id);
-
+  //const seat = await seats.findByIdAndDelete(req.params.id); findByIdAndDelete will not work with cascade remove booking
+  const seat = await seats.findById(req.params.id);
   if (!seat) {
     return next(
       new errorRespose(`seat not found for id ${req.params.id}`, 404)
     );
   }
+  seat.remove();
+
   res.status(200).json({
     success: true,
     data: {},
