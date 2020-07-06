@@ -85,3 +85,52 @@ exports.createBooking = asyncHandler(async (req, res, next) => {
     data: newBooking,
   });
 });
+
+//---------------------------------------------------------------------
+//@desc     update booking
+//@route    PUT /api/v1/bookings/:id
+//access    private
+
+exports.updateBooking = asyncHandler(async (req, res, next) => {
+  let bookingck = await Booking.findById(req.params.id);
+
+  if (!bookingck) {
+    return next(
+      new errorResponse(`booking not found for the id ${req.params.id}`),
+      404
+    );
+  }
+
+  const booking1 = await Booking.findByIdAndUpdate(req.params.id, req.body, {
+    new: true,
+    runValidators: true,
+  });
+
+  res.status(200).json({
+    success: true,
+    data: booking1,
+  });
+});
+
+//---------------------------------------------------------------------
+//@desc     delete booking
+//@route    DELETE /api/v1/bookings/:id
+//access    private
+
+exports.deleteBooking = asyncHandler(async (req, res, next) => {
+  const bookingck = await Booking.findById(req.params.id);
+
+  if (!bookingck) {
+    return next(
+      new errorResponse(`booking not found for the id ${req.params.id}`),
+      404
+    );
+  }
+
+  bookingck.remove();
+
+  res.status(200).json({
+    success: true,
+    data: {},
+  });
+});
