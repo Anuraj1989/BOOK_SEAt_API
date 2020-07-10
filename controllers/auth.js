@@ -84,6 +84,7 @@ const sendTokenResponse = (user, statusCode, res) => {
 
   res.status(statusCode).cookie("token", token, option).json({
     success: true,
+    role: user.role,
     token,
   });
 };

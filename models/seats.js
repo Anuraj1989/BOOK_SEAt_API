@@ -6,71 +6,55 @@ const booking = require("./booking");
 
 const Seatschema = mongoose.Schema(
   {
-    seatid: {
+    city: {
       type: String,
-      required: [true, "Please provide seat number"],
+      required: [true, "Please provide city"],
       trim: true,
-      maxlength: [20, "Floor number can not be more than 20 characters"],
+      maxlength: [20, "city can not be more than 20 characters"],
     },
-    slug: String,
 
-    floorid: {
+    site: {
       type: String,
-      required: [true, "Please provide floor number"],
+      required: [true, "Please site name"],
       trim: true,
-      maxlength: [20, "floor number can not be more than 20 characters"],
+      maxlength: [20, "site can not be more than 20 characters"],
     },
-    officeid: {
+    locationid: {
       type: String,
-      required: [true, "Please officeid"],
+      required: [true, "Please provide locationid"],
       trim: true,
-      maxlength: [20, "officeid can not be more than 20"],
+      maxlength: [20, "locationid can not be more than 20"],
+    },
+    phase: {
+      type: String,
+      required: [true, "Please provide phase"],
+      trim: true,
+      maxlength: [20, "phase can not be more than 20"],
+    },
+    floor: {
+      type: String,
+      required: [true, "floor provide phase"],
+      trim: true,
+      maxlength: [20, "floor can not be more than 20"],
+    },
+    seatno: {
+      type: String,
+      required: [true, "seat no provide phase"],
+      trim: true,
+      maxlength: [20, "seat no can not be more than 20"],
     },
 
     seatuniqueid: {
       type: String,
     },
-
-    officelocation: {
-      type: String,
-      required: [true, "Please provide location"],
-      trim: true,
-      maxlength: [20, "location can not be more than 20"],
-    },
-
-    departement: {
-      // Array of strings
-      type: [String],
-      required: true,
-      enum: ["IT Service", "Customer Care", "Finance", "Business", "Other"],
-    },
-    address: {
-      type: String,
-      required: [true, "Please add an address"],
-    },
-
-    geolocation: {
-      // GeoJSON Point
-      type: {
-        type: String,
-        enum: ["Point"],
-      },
-      coordinates: {
-        type: [Number],
-        index: "2dsphere",
-      },
-
-      formattedAddress: String,
-      street: String,
-      city: String,
-      state: String,
-      zipcode: String,
-      country: String,
-    },
-
     createdAt: {
       type: Date,
       default: Date.now,
+    },
+    user: {
+      type: mongoose.Schema.ObjectId,
+      ref: "User",
+      required: true,
     },
   },
   {
@@ -78,44 +62,11 @@ const Seatschema = mongoose.Schema(
     toObject: { virtuals: true },
   }
 );
-
-//geocode nad create location data from address
-
-Seatschema.pre("save", async function (next) {
-  console.log("inside geocoder");
-  const loc = await geocoder.geocode(this.address);
-  console.log(loc);
-  this.geolocation = {
-    type: "Point",
-    coordinates: [loc[0].longitude, loc[0].latitude],
-    formattedAddress: loc[0].formattedAddress,
-    street: loc[0].street,
-    city: loc[0].city,
-    state: loc[0].stateCode,
-    zipcode: loc[0].zipcode,
-    country: loc[0].countryCode,
-  };
-});
-
-//slug for seat number
-
 Seatschema.pre("save", function (next) {
-  console.log("Slug ran", this.seatid);
-  this.slug = slugify(this.seatid, { lower: true });
-  next();
-});
-
-//slug for seatuniqueid
-
-Seatschema.pre("save", function (next) {
-  this.seatuniqueid = this.officeid + this.floorid + this.seatid;
+  this.seatuniqueid = this.locationid + this.phase + this.floor + this.seatno;
   console.log("inside unique");
   next();
 });
-
-//do not save address as above captured
-//  this.address = undefined;
-//next();
 
 //cascade delete booking when a seat is deleted
 Seatschema.pre("remove", async function (next) {
