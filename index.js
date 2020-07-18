@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 const dotenv = require("dotenv");
 const colors = require("colors");
 const cookieParser = require("cookie-parser");
@@ -19,6 +20,10 @@ const auth = require("./routes/auth");
 const bookings = require("./routes/booking");
 
 const app = express();
+
+//pass through cors middleware for cross origin resource sharing
+
+app.use(cors());
 
 //pass to loger middleware to print URLs
 
