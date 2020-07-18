@@ -18,6 +18,7 @@ connectDB();
 const manageseats = require("./routes/manageseats");
 const auth = require("./routes/auth");
 const bookings = require("./routes/booking");
+const azzure = require("./routes/azuretest");
 
 const app = express();
 
@@ -39,7 +40,7 @@ app.use(cookieParser());
 app.use("/api/v1/seats", manageseats);
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/bookings", bookings);
-
+app.use("/api/v1/azure", azzure);
 //Attach the requests to customer error handler to catch all errors
 app.use(errorHandler);
 
